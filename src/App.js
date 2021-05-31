@@ -1,23 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect } from 'react';
+import useAxios from 'axios-hooks';
+import Card from './components/Card';
 
 function App() {
+  const [{ data, loading }, refetch] = useAxios('https://randomuser.me/api');
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
+  const userData = {
+    username: data?.results[0].login.username,
+    password: data?.results[0].login.password,
+    fullName: `${data?.results[0].name.title} ${data?.results[0].name.first} ${data?.results[0].name.last}`,
+    email: data?.results[0].email,
+    country: data?.results[0].location.country,
+    city: data?.results[0].location.city,
+    imageLink: data?.results[0].picture.large,
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Card userData={userData} isLoading={loading} />
     </div>
   );
 }
